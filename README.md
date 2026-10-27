@@ -32,6 +32,7 @@ Copiar `.env.example` a `.env` en local; en Vercel, Settings → Environment Var
 | `SITE_URL` | Origen de producción (`https://dominio.com`). Canonicals, `og:url`, `og:image`, sitemap, JSON-LD y `robots.txt`. | `npm run build` falla a propósito. En dev/staging/review no se emiten canonical, JSON-LD ni sitemap. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | Envío del formulario por SMTP (puerto 587 = STARTTLS, 465 = TLS). Secretos de servidor (`astro:env`), leídos en ejecución. | Si falta host, usuario o contraseña al compilar, el formulario **no se renderiza** y contacto ofrece teléfono y email. |
 | `CONTACT_TO` | Destinatario(s) de las solicitudes, separados por comas. | Se usa el email del negocio de `business.ts`. |
+| `CONTACT_CC` | Copia (Cc) de cada solicitud, p. ej. al proveedor web. Si existe al compilar, la política de privacidad lo menciona. | Sin copia. |
 
 No se usa ningún dominio de ejemplo como respaldo.
 
@@ -106,12 +107,13 @@ y se verían ampliadas.
 el resto del sitio es estático. Envía cada solicitud por SMTP con nodemailer:
 
 - **De:** "Trim Experts website" `<SMTP_USER>` (Microsoft 365 exige que el remitente sea el buzón autenticado).
-- **Para:** `CONTACT_TO` o, si no existe, el email del negocio. **Responder a:** el email del cliente.
+- **Para:** `CONTACT_TO` o, si no existe, el email del negocio. **Cc:** `CONTACT_CC` (opcional). **Responder a:** el email del cliente.
 - **Antispam:** campo oculto, mínimo 3 s entre carga y envío, y 5 envíos por IP cada 10 min (en memoria por instancia).
 - **Validación:** la misma de [src/lib/lead.ts](src/lib/lead.ts) en cliente y servidor, y el servicio debe ser uno de la lista.
 - **Respuestas:** `200` solo si el servidor SMTP aceptó el mensaje; `400`/`429`/`502`/`503` muestran el error con teléfono y email.
   Sin JavaScript, el envío nativo recibe una página HTML con el resultado.
-- Los fallos de SMTP quedan en los logs de la función en Vercel (sin credenciales).
+- Los logs de la función en Vercel registran cada envío aceptado (id del mensaje, nº de destinatarios aceptados/rechazados y
+  respuesta del servidor SMTP) y cada fallo, sin credenciales ni datos del cliente.
 
 **Microsoft 365:** la autenticación básica por SMTP funciona hasta finales de diciembre de 2026; después Microsoft la
 desactiva por defecto (un administrador puede reactivarla) y anunciará su retirada definitiva en 2027. El buzón necesita

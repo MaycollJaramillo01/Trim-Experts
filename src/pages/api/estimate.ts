@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import nodemailer from 'nodemailer';
-import { CONTACT_TO, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USER } from 'astro:env/server';
+import { CONTACT_CC, CONTACT_TO, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USER } from 'astro:env/server';
 import { business } from '../../data/business';
 import { serviceOptions } from '../../data/services';
 import { validateLead, type Lead } from '../../lib/lead';
@@ -71,9 +71,10 @@ export const POST: APIRoute = async ({ request }) => {
   });
 
   try {
-    await transport.sendMail({
+    const info = await transport.sendMail({
       from: { name: `${business.name} website`, address: SMTP_USER },
       to: CONTACT_TO || business.email,
+      cc: CONTACT_CC || undefined,
       replyTo: { name: oneLine(lead.name), address: lead.email },
       subject: oneLine(`Estimate request: ${lead.service} - ${lead.name}`),
       text: [
@@ -91,6 +92,8 @@ export const POST: APIRoute = async ({ request }) => {
         'Reply to this email to answer the customer directly.',
       ].join('\n'),
     });
+    // SMTP server's acceptance, for checking deliveries in Vercel's function logs (no customer data).
+    console.log(`estimate form: sent ${info.messageId} accepted=${info.accepted.length} rejected=${info.rejected.length} ${info.response}`);
   } catch (err) {
     // Logged for Vercel's function logs; never includes credentials.
     console.error('estimate form: SMTP send failed:', (err as Error).message);

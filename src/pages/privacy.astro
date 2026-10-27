@@ -3,6 +3,7 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import { business, formEndpoint } from '../data/business';
+import { CONTACT_CC } from 'astro:env/server';
 
 const updated = 'October 27, 2026';
 const crumbs = [{ name: 'Privacy Policy', path: '/privacy/' }];
@@ -38,7 +39,9 @@ const crumbs = [{ name: 'Privacy Policy', path: '/privacy/' }];
         <p>
           The contact form sends your name, email, phone (if provided), selected service, project location and description to
           this website's server, which emails them to Trim Experts through a Microsoft 365 email account managed by our
-          website provider. A copy of each message may remain in that account's sent mail. The form also sends the time you
+          website provider. A copy of each message may remain in that account's sent mail{CONTACT_CC
+            ? ', and a copy of each request is also sent to our website provider'
+            : ''}. The form also sends the time you
           started filling it in and a hidden empty field, and your IP address is checked briefly to limit repeated
           submissions; these are used only to filter out automated spam.
         </p>

@@ -34,6 +34,7 @@ export default defineConfig({
       SMTP_USER: secret(),
       SMTP_PASSWORD: secret(),
       CONTACT_TO: secret(),
+      CONTACT_CC: secret(),
     },
   },
 });
