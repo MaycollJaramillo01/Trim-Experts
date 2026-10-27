@@ -1,0 +1,54 @@
+---
+import { business } from '../data/business';
+import { visibleServices } from '../data/services';
+import Wordmark from './Wordmark.astro';
+
+const published = visibleServices(false);
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <Wordmark />
+        <p>Door installation, custom closets, decks, painting and refinishing for homes and buildings in {business.area.full}.</p>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul>
+          <li><a href={business.phone.href}>{business.phone.display}</a></li>
+          <li><a href={`mailto:${business.email}`}>{business.email}</a></li>
+          <li>{business.hours.label}</li>
+          <li>{business.hours.closedLabel}</li>
+          <li>Service area: {business.area.short}</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Services</h2>
+        <ul>
+          {published.map((s) => <li><a href={`/services/${s.slug}/`}>{s.name}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h2>Company</h2>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/projects/">Projects</a></li>
+          <li><a href="/service-areas/brooklyn-ny/">Brooklyn, NY</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Follow our work</h2>
+        <ul>
+          <li><a href={business.social.instagram} rel="noopener" target="_blank">Instagram<span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a href={business.social.yelp} rel="noopener" target="_blank">Yelp<span class="sr-only"> (opens in a new tab)</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {new Date().getFullYear()} {business.name}. {business.area.full}.</p>
+      <p><a href="/privacy/">Privacy Policy</a></p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import ServiceCards from '../../components/ServiceCards.astro';
+import CTA from '../../components/CTA.astro';
+import { business, showDrafts } from '../../data/business';
+import { services, visibleServices } from '../../data/services';
+
+const crumbs = [{ name: 'Services', path: '/services/' }];
+const published = visibleServices(false);
+const unpublished = showDrafts ? services.filter((s) => s.status !== 'published') : [];
+const doorGuide = [
+  { slug: 'door-installation', when: 'You need standard interior or exterior doors installed or replaced.' },
+  { slug: 'french-door-installation', when: 'You want a pair of glass-panel doors that meet in the middle.' },
+  { slug: 'custom-doors', when: 'The opening, design or wood calls for a door made to order, such as white oak.' },
+].flatMap((g) => published.filter((s) => s.slug === g.slug).map((s) => ({ ...g, name: s.name })));
+---
+
+<Base
+  title="Services in Brooklyn, NY | Trim Experts"
+  description="Door installation, French doors, custom doors, custom closets, decks, painting and refinishing in Brooklyn, NY. Compare Trim Experts services and how to start."
+  crumbs={crumbs}
+>
+  <PageHero
+    title="Our services in Brooklyn"
+    eyebrow={`Services · ${business.area.short}`}
+    lead={`Trim Experts offers ${published.length} services in ${business.area.full}: ${new Intl.ListFormat('en-US').format(published.map((s) => s.name))}. Each page explains what the work covers, what to send us, and what affects the cost.`}
+    crumbs={crumbs}
+  />
+
+  <section class="section" aria-label="All services">
+    <div class="container">
+      <ServiceCards items={published} />
+    </div>
+  </section>
+
+  {doorGuide.length > 0 && (
+    <section class="section section--surface" aria-labelledby="doors-heading">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="doors-heading">Which door service fits your project?</h2>
+          <p>Three of our services involve doors. They answer different needs.</p>
+        </div>
+        <div class="panel table-wrap">
+          <table class="compare">
+            <thead><tr><th scope="col">Service</th><th scope="col">Choose it when</th></tr></thead>
+            <tbody>
+              {doorGuide.map((g) => (
+                <tr><th scope="row"><a href={`/services/${g.slug}/`}>{g.name}</a></th><td>{g.when}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {unpublished.length > 0 && (
+    <section class="section" aria-labelledby="drafts-heading">
+      <div class="container">
+        <p class="notice">Review only: these pages are excluded from the production build until the client confirms the service.</p>
+        <h2 id="drafts-heading" class="section-head drafts-heading">Draft services</h2>
+        <ServiceCards items={unpublished} />
+      </div>
+    </section>
+  )}
+
+  <CTA heading="Not sure which service you need?" text="Describe the project and send a few photos. We will tell you which service it falls under and what information helps next." />
+</Base>

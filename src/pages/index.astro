@@ -1,0 +1,166 @@
+---
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import Gallery from '../components/Gallery.astro';
+import ServiceCards from '../components/ServiceCards.astro';
+import FAQ from '../components/FAQ.astro';
+import CTA from '../components/CTA.astro';
+import { business, formEndpoint } from '../data/business';
+import { visibleServices } from '../data/services';
+import { faqPage } from '../lib/schema';
+
+const published = visibleServices(false);
+const serviceList = new Intl.ListFormat('en-US').format(published.map((s) => s.name.toLowerCase().replace('french', 'French')));
+
+const faqs = [
+  {
+    q: 'What does Trim Experts do?',
+    a: `Trim Experts is a finishing company in ${business.area.full}. Its listed services are ${serviceList}.`,
+  },
+  {
+    q: 'Where does Trim Experts work?',
+    a: `${business.area.full} is the service area listed for the business. If your project is somewhere else, call before sending details to ask whether it can be taken on.`,
+  },
+  {
+    q: 'What are your business hours?',
+    a: `${business.hours.label}, ${business.hours.timezone}. ${business.hours.closedLabel}.`,
+  },
+  {
+    q: 'How do I request an estimate?',
+    a: `Call ${business.phone.display} or email ${business.email}${formEndpoint ? ', or use the form on the contact page,' : ''} with photos of the space, approximate measurements, your Brooklyn neighborhood and what you want to achieve.`,
+  },
+  {
+    q: 'Can I see examples of your work?',
+    a: 'Yes. The projects page shows the photos published on our Yelp profile, marked as completed or in progress, and links to project videos on our Instagram account.',
+  },
+];
+---
+
+<Base
+  title="Trim Experts | Doors, Closets & Decks in Brooklyn, NY"
+  description="Trim Experts installs doors, builds custom closets and decks, and offers painting and refinishing in Brooklyn, NY. See our projects and request an estimate."
+  schema={[faqPage(faqs)]}
+>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">{business.name} &middot; {business.area.short}</span>
+        <h1>Doors, closets, decks and finishing work in Brooklyn</h1>
+        <p class="lead">
+          Trim Experts installs interior and exterior doors, builds custom closets and decks, and offers painting and
+          refinishing for homes and buildings in {business.area.full}.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="/contact/">Request a Project Estimate</a>
+          <a class="btn btn--secondary" href={business.phone.href}>Call {business.phone.display}</a>
+        </div>
+        <ul class="hero-facts">
+          <li><strong>Service area:</strong> {business.area.short}</li>
+          <li><strong>Hours:</strong> Mon&ndash;Sat, 7 AM&ndash;5 PM</li>
+        </ul>
+      </div>
+      <figure class="media">
+        <Photo id="backyard-deck-white-railing" priority sizes="(min-width: 56rem) 28rem, 92vw" />
+        <figcaption>Backyard deck with white railing. Completed.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="approach-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">At a glance</span>
+        <h2 id="approach-heading">Trim Experts in three points</h2>
+      </div>
+      <ul class="app-grid" role="list">
+        <li>
+          <h3>Real project photos</h3>
+          <p>The photos on this site are the project photos published on our Yelp profile, including work photographed mid-installation.</p>
+        </li>
+        <li>
+          <h3>A clear first step</h3>
+          <p>Photos, rough measurements, your location and your goal are enough to begin. Each service page lists exactly what helps.</p>
+        </li>
+        <li>
+          <h3>Brooklyn service area</h3>
+          <p>Brooklyn, New York is the area we serve, {business.hours.label.replace('Monday to Saturday', 'Monday through Saturday')}.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="services-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Services</span>
+        <h2 id="services-heading">What Trim Experts does</h2>
+        <p>Each service has its own page with the scope, what to send us, and the questions to settle before work starts.</p>
+      </div>
+      <ServiceCards items={published} />
+    </div>
+  </section>
+
+  <section class="section section--surface" aria-labelledby="work-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Projects</span>
+        <h2 id="work-heading">Selected work</h2>
+        <p>A selection of photos from our published portfolio. Captions describe what each photo shows.</p>
+      </div>
+      <Gallery ids={['white-double-closet-doors', 'rooftop-terrace-circular-deck', 'wood-door-glass-panel', 'dining-room-wood-slat-wall', 'walk-in-closet-shelving', 'entry-vestibule-glass-doors-in-progress']} />
+      <p class="mt"><a class="btn btn--secondary" href="/projects/">See all project photos and videos</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="about-heading">
+    <div class="container split split--center">
+      <figure class="media media--square">
+        <Photo id="crew-interior-finish-work" sizes="(min-width: 56rem) 34rem, 92vw" />
+        <figcaption>Crew at work on interior finishes. In progress.</figcaption>
+      </figure>
+      <div>
+        <span class="eyebrow">About</span>
+        <h2 id="about-heading">A finishing company focused on the details</h2>
+        <p>
+          Trim Experts focuses on the parts of a project people see and use every day: doors that close properly, closets
+          that fit the space, decks and the finishes that complete a room.
+        </p>
+        <p>Project photos are published on Yelp, and project videos on Instagram.</p>
+        <p><a href="/about/">More about Trim Experts</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--surface" aria-labelledby="area-heading">
+    <div class="container split">
+      <div>
+        <span class="eyebrow">Service area</span>
+        <h2 id="area-heading">Serving Brooklyn, New York</h2>
+        <p>
+          Brooklyn is the service area listed for Trim Experts. Include your neighborhood or address when you get in touch,
+          along with anything about the building that affects access, such as stairs or building rules.
+        </p>
+        <p><a href="/service-areas/brooklyn-ny/">Our services in Brooklyn</a></p>
+      </div>
+      <dl class="facts panel">
+        <div><dt>Area</dt><dd>{business.area.full}</dd></div>
+        <div><dt>Hours</dt><dd>{business.hours.label} ({business.hours.timezone}). {business.hours.closedLabel}.</dd></div>
+        <div><dt>Phone</dt><dd><a href={business.phone.href}>{business.phone.display}</a></dd></div>
+        <div><dt>Email</dt><dd><a href={`mailto:${business.email}`}>{business.email}</a></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-heading">
+    <div class="container side">
+      <div>
+        <span class="eyebrow">FAQ</span>
+        <h2 id="faq-heading">Common questions</h2>
+        <p class="muted">Answers about services, area, hours and how to start.</p>
+      </div>
+      <FAQ faqs={faqs} />
+    </div>
+  </section>
+
+  <CTA />
+</Base>

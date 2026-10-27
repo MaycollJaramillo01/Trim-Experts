@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { business, emailTemplate, formEndpoint, mailto } from '../data/business';
+
+const crumbs = [{ name: 'Contact', path: '/contact/' }];
+
+const checklist = [
+  'Photos of the space, taken in good light',
+  'Approximate measurements',
+  'Your Brooklyn neighborhood or address',
+  'What you want to achieve, and any building rules that affect the work',
+];
+---
+
+<Base
+  title="Contact Trim Experts | Project Estimates in Brooklyn"
+  description={`Request a project estimate from Trim Experts in Brooklyn, NY. Call ${business.phone.display} or email ${business.email}. Open ${business.hours.label}.`}
+  crumbs={crumbs}
+>
+  <PageHero
+    title="Contact Trim Experts"
+    eyebrow={`Contact · ${business.area.short}`}
+    lead="Call or email to discuss your project. Tell us what you need done and where in Brooklyn, and include photos if you have them."
+    crumbs={crumbs}
+  >
+    <div class="btn-row">
+      <a class="btn btn--inverse" href={business.phone.href}>Call {business.phone.display}</a>
+      <a class="btn btn--outline-inverse" href={`mailto:${business.email}`}>Email {business.email}</a>
+    </div>
+  </PageHero>
+
+  <section class="section" aria-label="Contact options">
+    <div class="container split split--wide-left">
+      <div>
+        {formEndpoint ? (
+          <>
+            <h2>Request a Project Estimate</h2>
+            <ContactForm />
+          </>
+        ) : (
+          <>
+            <h2>Send your project details</h2>
+            <p>Email works best when you have photos to share. Include:</p>
+            <ul class="checklist">{checklist.map((c) => <li>{c}</li>)}</ul>
+            <div class="btn-row">
+              <a class="btn btn--primary" href={mailto('Project estimate request', emailTemplate())}>Email Project Details</a>
+              <a class="btn btn--secondary" href={business.phone.href}>Call Trim Experts</a>
+            </div>
+            <p class="fine">The email button opens your email app with a short template. You can also write to {business.email} directly.</p>
+          </>
+        )}
+      </div>
+      <aside class="panel" aria-labelledby="direct-heading">
+        <h2 id="direct-heading" class="h3">Direct contact</h2>
+        <dl class="facts">
+          <div><dt>Phone</dt><dd><a href={business.phone.href}>{business.phone.display}</a></dd></div>
+          <div><dt>Email</dt><dd><a href={`mailto:${business.email}`}>{business.email}</a></dd></div>
+          <div><dt>Hours</dt><dd>{business.hours.label}<br />{business.hours.closedLabel}<br /><span class="fine">{business.hours.timezone}</span></dd></div>
+          <div><dt>Area</dt><dd>{business.area.full}</dd></div>
+          {business.payments.confirmed && <div><dt>Payment</dt><dd>{business.payments.methods.join(', ')}</dd></div>}
+        </dl>
+        <p class="fine mt">
+          See our work on <a href={business.social.instagram} rel="noopener" target="_blank">Instagram<span class="sr-only"> (opens in a new tab)</span></a>
+          and <a href={business.social.yelp} rel="noopener" target="_blank">Yelp<span class="sr-only"> (opens in a new tab)</span></a>.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  {formEndpoint && (
+    <section class="section section--surface" aria-labelledby="include-heading">
+      <div class="container prose">
+        <h2 id="include-heading">What helps us review your project</h2>
+        <ul class="checklist">{checklist.map((c) => <li>{c}</li>)}</ul>
+      </div>
+    </section>
+  )}
+</Base>

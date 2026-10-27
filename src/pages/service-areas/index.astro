@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CTA from '../../components/CTA.astro';
+import { business } from '../../data/business';
+
+const crumbs = [{ name: 'Service Areas', path: '/service-areas/' }];
+---
+
+<Base
+  title="Service Areas | Trim Experts"
+  description="Trim Experts serves Brooklyn, New York. See the services available in Brooklyn and how to reach us about a project."
+  crumbs={crumbs}
+>
+  <PageHero
+    title="Where Trim Experts works"
+    eyebrow="Service areas"
+    lead={`Trim Experts lists one service area: ${business.area.full}.`}
+    crumbs={crumbs}
+  />
+
+  <section class="section" aria-label="Service area list">
+    <div class="container">
+      <ul class="link-list" role="list">
+        <li>
+          <a href="/service-areas/brooklyn-ny/">
+            <span>{business.area.full}<small>Services, project examples and local questions</small></span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+      </ul>
+      <p class="muted mt">
+        If your project is outside Brooklyn, call <a href={business.phone.href}>{business.phone.display}</a> before sending
+        details to ask whether it can be taken on.
+      </p>
+    </div>
+  </section>
+
+  <CTA />
+</Base>

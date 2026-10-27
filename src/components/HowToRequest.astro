@@ -1,0 +1,38 @@
+---
+import { business, emailTemplate, formEndpoint, mailto } from '../data/business';
+
+interface Props {
+  items: string[];
+  service?: string;
+  heading?: string;
+}
+
+const { items, service = '', heading = 'How to request an evaluation' } = Astro.props;
+const subject = service ? `${service} project in Brooklyn` : 'Project in Brooklyn';
+---
+
+<section class="section section--surface" aria-labelledby="request-heading">
+  <div class="container split split--wide-left">
+    <div>
+      <h2 id="request-heading">{heading}</h2>
+      <p>Send the following by email, or call and talk it through. Photos and rough numbers are enough to start; nothing needs to be exact yet.</p>
+      <ol class="numbered">
+        {items.map((i) => <li>{i}</li>)}
+      </ol>
+    </div>
+    <div class="panel">
+      <h3>Ways to reach us</h3>
+      <dl class="facts">
+        <div><dt>Phone</dt><dd><a href={business.phone.href}>{business.phone.display}</a></dd></div>
+        <div><dt>Email</dt><dd><a href={`mailto:${business.email}`}>{business.email}</a></dd></div>
+        <div><dt>Hours</dt><dd>{business.hours.label}. {business.hours.closedLabel}.</dd></div>
+      </dl>
+      <div class="btn-row">
+        {formEndpoint
+          ? <a class="btn btn--primary" href="/contact/">Request a Project Estimate</a>
+          : <a class="btn btn--primary" href={mailto(subject, emailTemplate(service))}>Email Project Details</a>}
+        <a class="btn btn--secondary" href={business.phone.href}>Call Trim Experts</a>
+      </div>
+    </div>
+  </div>
+</section>

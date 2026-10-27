@@ -1,0 +1,24 @@
+---
+import Photo from './Photo.astro';
+import type { Service } from '../data/services';
+
+interface Props {
+  items: Service[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="card-grid" role="list">
+  {items.map((s) => (
+    <li>
+      <article class="card">
+        <Photo id={s.hero} decorative sizes="(min-width: 75rem) 23rem, (min-width: 40rem) 45vw, 92vw" />
+        <div class="card-body">
+          <h3><a href={`/services/${s.slug}/`}>{s.name}</a></h3>
+          <p>{s.short}</p>
+          <span class="more" aria-hidden="true">View service &rarr;</span>
+        </div>
+      </article>
+    </li>
+  ))}
+</ul>

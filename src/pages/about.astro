@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CTA from '../components/CTA.astro';
+import { business } from '../data/business';
+import { visibleServices } from '../data/services';
+
+const crumbs = [{ name: 'About', path: '/about/' }];
+const published = visibleServices(false);
+---
+
+<Base
+  title="About Trim Experts | Finishing Work in Brooklyn, NY"
+  description="Trim Experts is a finishing company serving Brooklyn, NY: doors, closets, decks, painting and refinishing. Business details, hours and where to see our work."
+  crumbs={crumbs}
+>
+  <PageHero
+    title="About Trim Experts"
+    eyebrow="About"
+    lead={`Trim Experts is a finishing company serving ${business.area.full}. Its work centers on doors, closets, decks and the finishes that complete a space.`}
+    crumbs={crumbs}
+    image="white-built-in-shelving-in-progress"
+  />
+
+  <section class="section" aria-labelledby="what-heading">
+    <div class="container split">
+      <div>
+        <h2 id="what-heading">What we do</h2>
+        <p>
+          The services Trim Experts offers in Brooklyn are listed below. Each page describes the scope of the work, what is
+          confirmed for each project, and the information that helps us review a request.
+        </p>
+      </div>
+      <ul class="link-list" role="list">
+        {published.map((s) => (
+          <li><a href={`/services/${s.slug}/`}><span>{s.name}</span><span aria-hidden="true">&rarr;</span></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--surface" aria-labelledby="see-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="see-heading">Where to see our work</h2>
+        <p>Our project photos and videos are public, so you can look at the work before getting in touch.</p>
+      </div>
+      <ul class="app-grid" role="list">
+        <li>
+          <h3><a href="/projects/">Projects on this site</a></h3>
+          <p>The photos from our Yelp profile, grouped by type and marked as completed or in progress.</p>
+        </li>
+        <li>
+          <h3><a href={business.social.instagram} rel="noopener" target="_blank">Instagram<span class="sr-only"> (opens in a new tab)</span></a></h3>
+          <p>Project videos: decks, doors, white oak doors and custom closets.</p>
+        </li>
+        <li>
+          <h3><a href={business.social.yelp} rel="noopener" target="_blank">Yelp<span class="sr-only"> (opens in a new tab)</span></a></h3>
+          <p>Our business listing, with services, hours and project photos.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="details-heading">
+    <div class="container split">
+      <div>
+        <h2 id="details-heading">Business details</h2>
+        <p>Use these details to contact us. Trim Experts does not publish a walk-in location; projects are discussed by phone or email.</p>
+      </div>
+      <dl class="facts panel">
+        <div><dt>Name</dt><dd>{business.name}</dd></div>
+        <div><dt>Service area</dt><dd>{business.area.full}</dd></div>
+        <div><dt>Phone</dt><dd><a href={business.phone.href}>{business.phone.display}</a></dd></div>
+        <div><dt>Email</dt><dd><a href={`mailto:${business.email}`}>{business.email}</a></dd></div>
+        <div><dt>Hours</dt><dd>{business.hours.label} ({business.hours.timezone}). {business.hours.closedLabel}.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <CTA />
+</Base>

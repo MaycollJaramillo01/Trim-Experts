@@ -1,0 +1,28 @@
+---
+import { Picture } from 'astro:assets';
+import { photo, type PhotoId } from '../data/media';
+
+interface Props {
+  id: PhotoId;
+  sizes: string;
+  priority?: boolean;
+  decorative?: boolean;
+}
+
+const { id, sizes, priority = false, decorative = false } = Astro.props;
+const p = photo(id);
+const w = p.src.width;
+// Source files top out at 1000px: never request widths above the original.
+const widths = [...new Set([360, 560, w].filter((x) => x <= w))];
+---
+
+<Picture
+  src={p.src}
+  alt={decorative ? '' : p.alt}
+  widths={widths}
+  sizes={sizes}
+  formats={['avif', 'webp']}
+  loading={priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  decoding="async"
+/>

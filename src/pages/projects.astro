@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Gallery from '../components/Gallery.astro';
+import Reels from '../components/Reels.astro';
+import CTA from '../components/CTA.astro';
+import { business, showDrafts } from '../data/business';
+import { groups, photo, photoIds } from '../data/media';
+import { visibleServices } from '../data/services';
+
+const crumbs = [{ name: 'Projects', path: '/projects/' }];
+const visible = visibleServices(showDrafts);
+// Services linked from each photo group (only those that are built in this mode).
+const groupServices: Record<string, string[]> = {
+  doors: ['door-installation', 'french-door-installation', 'custom-doors'],
+  closets: ['custom-closets'],
+  outdoor: ['deck-building'],
+  interior: ['finish-carpentry', 'crown-molding-trim', 'decorative-wall-paneling', 'custom-built-ins', 'radiator-covers'],
+};
+const sections = groups.map((g) => ({
+  ...g,
+  ids: photoIds.filter((id) => photo(id).group === g.id),
+  links: visible.filter((s) => groupServices[g.id].includes(s.slug)),
+}));
+---
+
+<Base
+  title="Project Photos and Videos | Trim Experts, Brooklyn NY"
+  description="Photos and videos of Trim Experts projects: doors, closets, decks and interior finish work, marked as completed or in progress. Brooklyn, NY."
+  crumbs={crumbs}
+>
+  <PageHero
+    title="Project photos and videos"
+    eyebrow={`Projects · ${business.area.short}`}
+    lead={`The ${photoIds.length} project photos published on the Trim Experts Yelp profile and the project videos posted on Instagram. Captions describe what each photo shows. Photos marked "In progress" were taken during the work; project locations are not identified.`}
+    crumbs={crumbs}
+  >
+    <nav aria-label="Project categories">
+      <ul class="chips" role="list">
+        {sections.map((s) => <li><a href={`#${s.id}`}>{s.title}</a></li>)}
+        <li><a href="#videos">Videos</a></li>
+      </ul>
+    </nav>
+  </PageHero>
+
+  {sections.map((s, i) => (
+    <section class={`section ${i % 2 === 0 ? '' : 'section--surface'}`} id={s.id} aria-labelledby={`${s.id}-heading`}>
+      <div class="container">
+        <div class="section-head">
+          <h2 id={`${s.id}-heading`}>{s.title}</h2>
+          <p>{s.intro}</p>
+          {s.links.length > 0 && (
+            <p class="fine">
+              Related: {s.links.map((l, j) => <>{j > 0 && ', '}<a href={`/services/${l.slug}/`}>{l.name}</a></>)}
+            </p>
+          )}
+        </div>
+        <Gallery ids={s.ids} />
+      </div>
+    </section>
+  ))}
+
+  <section class="section" id="videos" aria-labelledby="videos-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="videos-heading">Videos on Instagram</h2>
+        <p>Project videos posted on <a href={business.social.instagram} rel="noopener" target="_blank">@trim_experts<span class="sr-only"> (opens in a new tab)</span></a>, newest first. Titles follow each post's caption.</p>
+      </div>
+      <Reels />
+    </div>
+  </section>
+
+  <CTA />
+</Base>

@@ -1,0 +1,149 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Gallery from '../../components/Gallery.astro';
+import Reels from '../../components/Reels.astro';
+import FAQ from '../../components/FAQ.astro';
+import CTA from '../../components/CTA.astro';
+import HowToRequest from '../../components/HowToRequest.astro';
+import { business, showDrafts } from '../../data/business';
+import { photo } from '../../data/media';
+import { visibleServices, type Service } from '../../data/services';
+import { faqPage, serviceNode } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return visibleServices(showDrafts).map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props as { s: Service };
+const path = `/services/${s.slug}/`;
+const crumbs = [{ name: 'Services', path: '/services/' }, { name: s.name, path }];
+const hero = photo(s.hero);
+const heroJpg = await getImage({ src: hero.src, format: 'jpg' });
+const all = visibleServices(showDrafts);
+const related = s.related.flatMap((slug) => all.filter((x) => x.slug === slug));
+const site = Astro.site;
+const schema = site
+  ? [
+      serviceNode(site, { name: s.name, description: s.answer, path }, { url: heroJpg.src, caption: hero.title, width: hero.src.width, height: hero.src.height }),
+      faqPage(s.faqs),
+    ]
+  : [];
+---
+
+<Base
+  title={s.title}
+  description={s.description}
+  crumbs={crumbs}
+  schema={schema}
+  image={hero.src}
+  draft={s.status !== 'published'}
+>
+  <PageHero title={s.h1} eyebrow={`Service · ${business.area.short}`} lead={s.lead} crumbs={crumbs} image={s.hero} ctas />
+
+  <section class="section" aria-labelledby="answer-heading">
+    <div class="container side">
+      <h2 id="answer-heading">{s.question}</h2>
+      <p class="lead">{s.answer}</p>
+    </div>
+  </section>
+
+  <section class="section section--surface" aria-labelledby="scope-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="scope-heading">Scope of the service</h2>
+        <p>What the work covers, and what is settled during the consultation for each project.</p>
+      </div>
+      <div class="split">
+        <div class="panel">
+          <h3>What we can help with</h3>
+          <ul class="checklist">{s.scope.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div class="panel">
+          <h3>Confirmed during the consultation</h3>
+          <ul class="qlist">{s.confirm.map((i) => <li>{i}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="apps-heading">
+    <div class="container">
+      <h2 id="apps-heading" class="section-head">{s.applicationsHeading ?? 'Where it applies'}</h2>
+      <ul class="app-grid" role="list">
+        {s.applications.map((a) => <li><h3>{a.title}</h3><p>{a.text}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  {s.options && (
+    <section class="section" aria-labelledby="options-heading">
+      <div class="container side">
+        <div>
+          <h2 id="options-heading">Materials and options</h2>
+          <p class="fine">Options to discuss for your project, not standard inclusions. Materials are agreed with you before work starts.</p>
+        </div>
+        <div class="panel">
+          <p class="muted">{s.options.intro}</p>
+          <ul class="checklist">{s.options.items.map((i) => <li>{i}</li>)}</ul>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <HowToRequest items={s.send} service={s.name} />
+
+  <section class="section" aria-labelledby="gallery-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="gallery-heading">Project photos</h2>
+        <p>From our published portfolio. Photos marked "In progress" were taken during the work. Project locations are not identified.</p>
+      </div>
+      <Gallery ids={s.gallery} note={s.galleryNote} />
+      {s.reels && (
+        <>
+          <h3 class="reels-heading">Videos on Instagram</h3>
+          <Reels ids={s.reels} />
+        </>
+      )}
+    </div>
+  </section>
+
+  <section class="section section--surface" aria-labelledby="cost-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="cost-heading">What affects the cost</h2>
+        <p>Trim Experts does not publish prices: every estimate depends on the project. These are the main factors.</p>
+      </div>
+      <dl class="factors">
+        {s.costFactors.map((f) => <div><dt>{f.factor}</dt><dd>{f.detail}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-heading">
+    <div class="container side">
+      <div>
+        <h2 id="faq-heading">Frequently asked questions</h2>
+        <p class="muted">Another question? Call <a href={business.phone.href}>{business.phone.display}</a>.</p>
+      </div>
+      <FAQ faqs={s.faqs} />
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section" aria-labelledby="related-heading">
+      <div class="container">
+        <h2 id="related-heading" class="section-head">Related services</h2>
+        <ul class="link-list" role="list">
+          {related.map((r) => (
+            <li><a href={`/services/${r.slug}/`}><span>{r.name}<small>{r.short}</small></span><span aria-hidden="true">&rarr;</span></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <CTA />
+</Base>

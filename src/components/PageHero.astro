@@ -1,0 +1,55 @@
+---
+// Inner-page hero: solid brand band with breadcrumbs, optional framed photo and CTAs.
+// ponytail: photos top out at 1000px, so they sit in a frame instead of a full-bleed background (no upscaling).
+import Photo from './Photo.astro';
+import { business } from '../data/business';
+import { photo, stageLabel, type PhotoId } from '../data/media';
+import type { Crumb } from '../lib/schema';
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  lead?: string;
+  crumbs?: Crumb[];
+  image?: PhotoId;
+  ctas?: boolean;
+}
+
+const { title, eyebrow, lead, crumbs = [], image, ctas = false } = Astro.props;
+const trail = crumbs.length ? [{ name: 'Home', path: '/' }, ...crumbs] : [];
+const p = image ? photo(image) : null;
+---
+
+<section class:list={['page-hero', { 'page-hero--media': p }]}>
+  <div class="container">
+    {trail.length > 0 && (
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          {trail.map((c, i) =>
+            i < trail.length - 1 ? <li><a href={c.path}>{c.name}</a></li> : <li aria-current="page">{c.name}</li>
+          )}
+        </ol>
+      </nav>
+    )}
+    <div class="page-hero-grid">
+      <div>
+        {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+        <h1>{title}</h1>
+        {lead && <p class="lead">{lead}</p>}
+        {ctas && (
+          <div class="btn-row">
+            <a class="btn btn--inverse" href="/contact/">Request a Project Estimate</a>
+            <a class="btn btn--outline-inverse" href={business.phone.href}>Call Trim Experts</a>
+          </div>
+        )}
+        <slot />
+      </div>
+      {p && (
+        <figure class="media">
+          <Photo id={p.id} priority sizes="(min-width: 56rem) 30rem, 92vw" />
+          <figcaption>{p.title}{p.stage && <>. {stageLabel[p.stage]}</>}</figcaption>
+        </figure>
+      )}
+    </div>
+  </div>
+</section>

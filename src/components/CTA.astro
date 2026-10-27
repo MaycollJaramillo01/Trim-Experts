@@ -1,0 +1,26 @@
+---
+import { business } from '../data/business';
+
+interface Props {
+  heading?: string;
+  text?: string;
+}
+
+const {
+  heading = 'Discuss your project',
+  text = 'Send photos, approximate measurements, your Brooklyn neighborhood and what you want to achieve. Those details make it easier to review your project.',
+} = Astro.props;
+---
+
+<section class="section section--inverse cta-band" aria-labelledby="cta-heading">
+  <div class="container">
+    <div>
+      <h2 id="cta-heading">{heading}</h2>
+      <p>{text}</p>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn--inverse" href="/contact/">Request a Project Estimate</a>
+      <a class="btn btn--outline-inverse" href={business.phone.href}>Call Trim Experts</a>
+    </div>
+  </div>
+</section>

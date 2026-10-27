@@ -1,0 +1,45 @@
+---
+import { reels, reelUrl, type ReelId } from '../data/media';
+
+interface Props {
+  ids?: readonly ReelId[];
+}
+
+const { ids } = Astro.props;
+const list = ids ? reels.filter((r) => ids.includes(r.id)) : reels;
+const month = (ym: string) =>
+  new Date(`${ym}-15T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<ul class="reels" role="list">
+  {list.map((r) => (
+    <li class="reel">
+      <p class="reel-topic">{r.topic}</p>
+      <p class="reel-date">Posted <time datetime={r.date}>{month(r.date)}</time></p>
+      <div class="reel-actions">
+        <button type="button" class="btn btn--secondary btn--small" data-reel={r.id} data-topic={r.topic}>
+          Play here<span class="sr-only">: {r.topic}</span>
+        </button>
+        <a href={reelUrl(r.id)} rel="noopener" target="_blank">
+          Watch on Instagram<span class="sr-only">: {r.topic} (opens in a new tab)</span>
+        </a>
+      </div>
+    </li>
+  ))}
+</ul>
+<p class="fine">Videos load from Instagram only when you choose to play them. If a video does not load, use the Instagram link.</p>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLButtonElement>('button[data-reel]');
+    if (!b) return;
+    const frame = document.createElement('iframe');
+    frame.src = `https://www.instagram.com/reel/${b.dataset.reel}/embed/`;
+    frame.title = `Instagram video: ${b.dataset.topic}`;
+    frame.allow = 'encrypted-media; picture-in-picture; fullscreen';
+    frame.tabIndex = 0;
+    b.closest('.reel')!.insertBefore(frame, b.parentElement);
+    b.remove();
+    frame.focus();
+  });
+</script>

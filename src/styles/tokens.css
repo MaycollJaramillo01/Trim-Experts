@@ -1,0 +1,76 @@
+/*
+  Design tokens. Single source for color, type and spacing.
+
+  BRAND COLORS ARE PROVISIONAL. No logo file was supplied with the project
+  material, so this is a neutral palette, not one derived from the logo.
+  When the logo arrives: sample its colors, replace the --brand-* values,
+  and re-run the contrast check described in the README.
+*/
+:root {
+  /* Brand (provisional neutral) */
+  --brand-900: #1e2529;
+  --brand-700: #39454c;
+  --brand-100: #e9ecee;
+
+  /* Neutrals (warm, to sit with the wood tones in the photos) */
+  --neutral-0: #ffffff;
+  --neutral-50: #f7f6f3;
+  --neutral-100: #eeece7;
+  --neutral-300: #d4d0c7;
+  --neutral-700: #55524b;
+  --neutral-900: #1b1a17;
+
+  /* Semantic roles: components use these, never the raw values above */
+  --color-bg: var(--neutral-0);
+  --color-surface: var(--neutral-50);
+  --color-surface-strong: var(--neutral-100);
+  --color-border: var(--neutral-300);
+  --color-text: var(--neutral-900);
+  --color-text-muted: var(--neutral-700);
+  --color-primary: var(--brand-900);
+  --color-primary-hover: var(--brand-700);
+  --color-on-primary: #ffffff;
+  --color-inverse-bg: var(--brand-900);
+  --color-inverse-text: #f3f2ee;
+  --color-inverse-muted: #c3c8cb;
+  --color-link: var(--brand-900);
+  --color-focus: #1f5fbf;
+  --color-focus-inverse: #ffffff;
+  --color-success-bg: #e4f1e8;
+  --color-success-text: #1b5631;
+  --color-error-bg: #fbe9e7;
+  --color-error-text: #a61b0f;
+  --color-progress-bg: #fbefd6;
+  --color-progress-text: #6a4300;
+
+  /* Type: self-hosted variable fonts (latin subset preloaded), system fallbacks */
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Archivo Variable", "Inter Variable", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: clamp(1.375rem, 1.2rem + 0.7vw, 1.625rem);
+  --text-2xl: clamp(1.75rem, 1.35rem + 1.7vw, 2.625rem);
+  --text-3xl: clamp(2.25rem, 1.55rem + 3vw, 3.75rem);
+  --leading-tight: 1.08;
+  --leading-body: 1.65;
+
+  /* Space and shape */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: clamp(3rem, 2rem + 4vw, 5.5rem);
+  --radius: 4px;
+  --container: 74rem;
+  --gutter: 1rem;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
+}
+
+@media (min-width: 48rem) {
+  :root { --gutter: 2rem; }
+}

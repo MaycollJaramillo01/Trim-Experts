@@ -1,0 +1,80 @@
+---
+import { getImage } from 'astro:assets';
+import Photo from './Photo.astro';
+import { photo, stageLabel, type PhotoId } from '../data/media';
+
+interface Props {
+  ids: readonly PhotoId[];
+  note?: string;
+}
+
+const { ids, note } = Astro.props;
+const items = await Promise.all(
+  ids.map(async (id) => {
+    const p = photo(id);
+    const large = await getImage({ src: p.src, format: 'webp' });
+    return { p, large };
+  })
+);
+---
+
+{note && <p class="gallery-note">{note}</p>}
+<ul class="gallery" role="list">
+  {items.map(({ p, large }) => (
+    <li>
+      <figure>
+        <a
+          href={large.src}
+          data-lightbox
+          data-caption={p.stage ? `${p.title} (${stageLabel[p.stage].toLowerCase()})` : p.title}
+          data-w={p.src.width}
+          data-h={p.src.height}
+        >
+          <span class="sr-only">Enlarge photo: </span>
+          <Photo id={p.id} sizes="(min-width: 75rem) 23rem, (min-width: 40rem) 45vw, 92vw" />
+        </a>
+        <figcaption>
+          {p.title}
+          {p.stage && <span class={`badge badge--${p.stage}`}>{stageLabel[p.stage]}</span>}
+        </figcaption>
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<script>
+  // Progressive enhancement: without JS each link opens the full-size image.
+  let dialog: HTMLDialogElement | null = null;
+  let opener: HTMLElement | null = null;
+
+  function build() {
+    const d = document.createElement('dialog');
+    d.className = 'lightbox';
+    d.setAttribute('aria-label', 'Enlarged photo');
+    d.innerHTML =
+      '<button type="button" class="btn btn--inverse btn--small lightbox-close">Close</button><figure><img alt=""><figcaption></figcaption></figure>';
+    d.addEventListener('click', (e) => {
+      const t = e.target as Element;
+      if (t === d || t.closest('.lightbox-close')) d.close();
+    });
+    d.addEventListener('close', () => opener?.focus());
+    document.body.append(d);
+    return d;
+  }
+
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('a[data-lightbox]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    dialog ??= build();
+    opener = a;
+    const img = dialog.querySelector('img')!;
+    img.src = a.href;
+    img.alt = a.querySelector('img')?.alt ?? '';
+    img.width = Number(a.dataset.w);
+    img.height = Number(a.dataset.h);
+    dialog.querySelector('figcaption')!.textContent = a.dataset.caption ?? '';
+    dialog.showModal();
+    dialog.querySelector<HTMLButtonElement>('.lightbox-close')!.focus();
+  });
+</script>

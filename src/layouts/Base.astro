@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { business, isProductionMode } from '../data/business';
+import { photo } from '../data/media';
+import { graph, breadcrumbs, type Crumb } from '../lib/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Trail after "Home", for BreadcrumbList JSON-LD. The visible trail is rendered by PageHero. */
+  crumbs?: Crumb[];
+  schema?: object[];
+  image?: ImageMetadata;
+  noindex?: boolean;
+  draft?: boolean;
+}
+
+const fallback = photo('backyard-deck-white-railing');
+const { title, description, crumbs = [], schema = [], image = fallback.src, noindex = false, draft = false } = Astro.props;
+const site = Astro.site;
+const indexable = isProductionMode && !!site && !noindex && !draft;
+const canonical = site ? new URL(Astro.url.pathname, site).href : undefined;
+const og = await getImage({ src: image, format: 'jpg', width: Math.min(image.width, 1200) });
+const trail = crumbs.length ? [{ name: 'Home', path: '/' }, ...crumbs] : [];
+// No domain, no JSON-LD: absolute @ids on a placeholder host would be wrong.
+const jsonLd = site && !noindex ? graph(site, [...(trail.length ? [breadcrumbs(site, trail)] : []), ...schema]) : null;
+---
+
+<!doctype html>
+<html lang={business.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={business.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {site && <meta property="og:image" content={new URL(og.src, site).href} />}
+    {site && <meta property="og:image:width" content={String(og.attributes.width ?? image.width)} />}
+    {site && <meta property="og:image:height" content={String(og.attributes.height ?? image.height)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      {draft && (
+        <div class="draft-bar">
+          <p class="notice container">Draft for review. This page is not published and is excluded from the production build.</p>
+        </div>
+      )}
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

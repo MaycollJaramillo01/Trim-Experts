@@ -1,0 +1,16 @@
+---
+// Answers stay visible (no accordion) so the text matches the FAQPage JSON-LD and reads without interaction.
+interface Props {
+  faqs: { q: string; a: string }[];
+}
+const { faqs } = Astro.props;
+---
+
+<div class="faq">
+  {faqs.map((f) => (
+    <div class="faq-item">
+      <h3>{f.q}</h3>
+      <p>{f.a}</p>
+    </div>
+  ))}
+</div>

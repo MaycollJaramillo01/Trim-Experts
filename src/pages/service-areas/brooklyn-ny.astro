@@ -1,0 +1,119 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Gallery from '../../components/Gallery.astro';
+import FAQ from '../../components/FAQ.astro';
+import CTA from '../../components/CTA.astro';
+import HowToRequest from '../../components/HowToRequest.astro';
+import { business } from '../../data/business';
+import { visibleServices } from '../../data/services';
+import { faqPage } from '../../lib/schema';
+
+const crumbs = [{ name: 'Service Areas', path: '/service-areas/' }, { name: 'Brooklyn, NY', path: '/service-areas/brooklyn-ny/' }];
+const published = visibleServices(false);
+const names = new Intl.ListFormat('en-US').format(published.map((s) => s.name.toLowerCase().replace('french', 'French')));
+
+const considerations = [
+  {
+    title: 'Building rules',
+    text: 'Co-ops, condos and managed buildings often set their own rules for contractors, work hours, elevator use and deliveries. Check with your building and include those requirements in your request.',
+  },
+  {
+    title: 'Access and deliveries',
+    text: 'Walk-up stairs, narrow hallways, street parking and backyards reached only through the house all affect how doors, decking and materials get to the work area. Mention them up front.',
+  },
+  {
+    title: 'Older buildings',
+    text: 'Openings and walls in older homes are often out of square. Photos of corners, frames and ceiling lines help show how much fitting a door, closet or trim job will need.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Does Trim Experts work throughout Brooklyn?',
+    a: `Brooklyn is the service area listed for Trim Experts. Include your neighborhood or address with your request so the project can be reviewed with its location in mind.`,
+  },
+  {
+    q: 'Which services are available in Brooklyn?',
+    a: `In Brooklyn, Trim Experts offers ${names}.`,
+  },
+  {
+    q: 'Can you work in a co-op or condo building?',
+    a: 'Tell us the building type when you get in touch. Buildings with management or a board often have requirements for contractors; share them in your request so we can confirm whether we can meet them.',
+  },
+  {
+    q: 'What are your hours?',
+    a: `${business.hours.label}, ${business.hours.timezone}. ${business.hours.closedLabel}.`,
+  },
+  {
+    q: 'Is there a location I can visit?',
+    a: `Trim Experts does not publish a walk-in location. Call ${business.phone.display} or email ${business.email} to discuss your project.`,
+  },
+  {
+    q: 'What if my project is outside Brooklyn?',
+    a: 'Brooklyn is the only service area we list. Call before sending details to ask whether a project elsewhere can be taken on.',
+  },
+];
+---
+
+<Base
+  title="Serving Brooklyn, NY | Trim Experts Service Area"
+  description="Trim Experts serves Brooklyn, NY with door installation, custom closets, decks, painting and refinishing. Local questions, project photos and how to start."
+  crumbs={crumbs}
+  schema={[faqPage(faqs)]}
+>
+  <PageHero
+    title="Serving Brooklyn, New York"
+    eyebrow="Service area"
+    lead={`${business.name} serves ${business.area.full}, the service area listed for the business. In Brooklyn we offer ${names}.`}
+    crumbs={crumbs}
+    ctas
+  />
+
+  <section class="section section--surface" aria-labelledby="bk-services-heading">
+    <div class="container">
+      <h2 id="bk-services-heading" class="section-head">Services available in Brooklyn</h2>
+      <ul class="link-list" role="list">
+        {published.map((s) => (
+          <li><a href={`/services/${s.slug}/`}><span>{s.name}<small>{s.short}</small></span><span aria-hidden="true">&rarr;</span></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="local-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="local-heading">Planning a project in Brooklyn</h2>
+        <p>Three things that shape many Brooklyn projects, and that are worth mentioning in your first message.</p>
+      </div>
+      <ul class="app-grid" role="list">
+        {considerations.map((c) => <li><h3>{c.title}</h3><p>{c.text}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="bk-work-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="bk-work-heading">Examples of our work</h2>
+        <p>Photos from our published portfolio. Project locations are not identified. <a href="/projects/">See all projects</a>.</p>
+      </div>
+      <Gallery ids={['backyard-deck-white-railing', 'white-double-closet-doors', 'entry-door-sidelights-in-progress', 'walk-in-closet-shelving', 'doors-staged-for-installation', 'deck-and-gazebo']} />
+    </div>
+  </section>
+
+  <HowToRequest items={['Photos of the space', 'Approximate measurements', 'Your Brooklyn neighborhood or address', 'Building rules or access details', 'What you want to achieve']} />
+
+  <section class="section" aria-labelledby="bk-faq-heading">
+    <div class="container side">
+      <div>
+        <span class="eyebrow">FAQ</span>
+        <h2 id="bk-faq-heading">Questions from Brooklyn property owners</h2>
+      </div>
+      <FAQ faqs={faqs} />
+    </div>
+  </section>
+
+  <CTA />
+</Base>
