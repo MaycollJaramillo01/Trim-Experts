@@ -30,7 +30,7 @@ Estado a 27 de octubre de 2026. Cada punto indica dónde se cambia en el código
 | 17 | ¿Estimados gratuitos? ¿Visitas? Condiciones. No usar "Free Estimate" hasta confirmar. | CTAs y FAQ |
 | 18 | Propietario, razón social, años de experiencia, historia, licencias, seguros, garantías. Nada de esto se publica. | `about`, JSON-LD |
 | 19 | Testimonios reales con permiso. No hay sección de reseñas. | Nueva sección |
-| 20 | WhatsApp: burbuja añadida con el número principal (347) 632-6556. Confirmar que ese número está activo en WhatsApp; si es otro, cambiarlo. | `business.whatsapp` en `business.ts` |
+| 20 | WhatsApp: **confirmado** (27-10-2026). El (347) 632-6556 tiene WhatsApp activo y la burbuja usa ese número. Nada pendiente. | `business.whatsapp` en `business.ts` |
 | 21 | Fotos de mayor resolución (máx. actual 1000 px) y los MP4 originales de los reels, si quieren alojarlos. | `src/assets/photos/`, `media.ts` |
 | 22 | Ficha de Google Business Profile (si existe) y reclamar el perfil de Yelp (figuraba "Unclaimed"). | `business.social` y `sameAs` en JSON-LD |
 

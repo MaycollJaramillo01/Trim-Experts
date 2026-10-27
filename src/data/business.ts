@@ -30,7 +30,7 @@ export const business = {
     instagram: 'https://www.instagram.com/trim_experts/',
     yelp: 'https://www.yelp.com/biz/trim-experts-brooklyn',
   },
-  // Same number as the phone. Confirm with the client that it is active on WhatsApp.
+  // Same number as the phone; confirmed active on WhatsApp (2026-10-27).
   whatsapp: {
     number: '13476326556',
     message: "Hi Trim Experts, I'd like to discuss a project in Brooklyn.",
