@@ -753,3 +753,6 @@ export const services: Service[] = [
 
 export const visibleServices = (includeDrafts: boolean) =>
   services.filter((s) => includeDrafts || s.status === 'published');
+
+/** Choices in the contact form; the endpoint accepts only these. */
+export const serviceOptions = [...visibleServices(false).map((s) => s.name), 'Other or not sure'];

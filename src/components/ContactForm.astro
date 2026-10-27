@@ -1,9 +1,7 @@
 ---
-// Rendered only when PUBLIC_FORM_ENDPOINT is set. Contract: see README ("Formulario").
+// Rendered only when SMTP is configured (see business.ts). Posts to src/pages/api/estimate.ts.
 import { business, formEndpoint } from '../data/business';
-import { visibleServices } from '../data/services';
-
-const options = [...visibleServices(false).map((s) => s.name), 'Other or not sure'];
+import { serviceOptions as options } from '../data/services';
 ---
 
 <form class="form" id="estimate-form" action={formEndpoint} method="post" novalidate data-endpoint={formEndpoint}>

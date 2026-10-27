@@ -20,17 +20,18 @@ npm run build          # build de producción: exige SITE_URL, ejecuta check ant
 npm run build:staging  # contenido de producción (sin borradores), pero noindex, robots bloqueado, sin sitemap ni canonicals
 npm run build:review   # build de revisión: incluye borradores, todo noindex, robots bloqueado, sin sitemap
 npm run verify         # tras `npm run build`: valida el dist y regenera docs/page-matrix.md
-npm run preview        # sirve el último build
+vercel dev             # sitio + función del formulario como en Vercel (requiere `vercel link`)
 ```
 
 ## Variables de entorno
 
-Copiar `.env.example` a `.env`.
+Copiar `.env.example` a `.env` en local; en Vercel, Settings → Environment Variables. **El repositorio es público: nunca subir valores reales.**
 
 | Variable | Uso | Si está vacía |
 |---|---|---|
-| `SITE_URL` | Origen de producción (`https://dominio.com`). Canonicals, `og:url`, `og:image`, sitemap, JSON-LD y `robots.txt`. | `npm run build` falla a propósito. En dev/review no se emiten canonical, JSON-LD ni sitemap. |
-| `PUBLIC_FORM_ENDPOINT` | URL que recibe el formulario (JSON). | El formulario **no se renderiza**: contacto muestra teléfono y un botón de email con plantilla. |
+| `SITE_URL` | Origen de producción (`https://dominio.com`). Canonicals, `og:url`, `og:image`, sitemap, JSON-LD y `robots.txt`. | `npm run build` falla a propósito. En dev/staging/review no se emiten canonical, JSON-LD ni sitemap. |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | Envío del formulario por SMTP (puerto 587 = STARTTLS, 465 = TLS). Secretos de servidor (`astro:env`), leídos en ejecución. | Si falta host, usuario o contraseña al compilar, el formulario **no se renderiza** y contacto ofrece teléfono y email. |
+| `CONTACT_TO` | Destinatario(s) de las solicitudes, separados por comas. | Se usa el email del negocio de `business.ts`. |
 
 No se usa ningún dominio de ejemplo como respaldo.
 
@@ -99,14 +100,27 @@ y se verían ampliadas.
 - Galería con lightbox en `<dialog>` nativo: Enter abre, foco en "Close", Escape cierra y devuelve el foco. Sin JS, el enlace abre la imagen.
 - Reels: tarjetas con enlace directo a Instagram. "Play here" inserta el embed solo al pulsar (no se carga nada de Instagram antes). No hay MP4 locales.
 
-## Formulario: contrato de integración
+## Formulario
 
-Estado actual: **sin endpoint** → el formulario no se muestra. Para activarlo, definir `PUBLIC_FORM_ENDPOINT` y reconstruir.
+[src/pages/api/estimate.ts](src/pages/api/estimate.ts) es la única ruta dinámica (Vercel Function, adaptador `@astrojs/vercel`);
+el resto del sitio es estático. Envía cada solicitud por SMTP con nodemailer:
 
-Petición del navegador:
+- **De:** "Trim Experts website" `<SMTP_USER>` (Microsoft 365 exige que el remitente sea el buzón autenticado).
+- **Para:** `CONTACT_TO` o, si no existe, el email del negocio. **Responder a:** el email del cliente.
+- **Antispam:** campo oculto, mínimo 3 s entre carga y envío, y 5 envíos por IP cada 10 min (en memoria por instancia).
+- **Validación:** la misma de [src/lib/lead.ts](src/lib/lead.ts) en cliente y servidor, y el servicio debe ser uno de la lista.
+- **Respuestas:** `200` solo si el servidor SMTP aceptó el mensaje; `400`/`429`/`502`/`503` muestran el error con teléfono y email.
+  Sin JavaScript, el envío nativo recibe una página HTML con el resultado.
+- Los fallos de SMTP quedan en los logs de la función en Vercel (sin credenciales).
+
+**Microsoft 365:** la autenticación básica por SMTP funciona hasta finales de diciembre de 2026; después Microsoft la
+desactiva por defecto (un administrador puede reactivarla) y anunciará su retirada definitiva en 2027. El buzón necesita
+"Authenticated SMTP" habilitado. Si falla, el log mostrará `5.7.139` o `5.7.30`.
+
+Formato de la petición:
 
 ```
-POST {PUBLIC_FORM_ENDPOINT}
+POST /api/estimate/
 Content-Type: application/json
 Accept: application/json
 
@@ -122,16 +136,7 @@ Accept: application/json
 }
 ```
 
-El endpoint debe:
-
-1. Repetir la validación de [src/lib/lead.ts](src/lib/lead.ts) (no confiar en el cliente).
-2. Rechazar si `company_website` no está vacío o si `Date.now() - startedAt < 3000` ms. Añadir límite de frecuencia por IP.
-3. Entregar el mensaje a `Trimexperts1@gmail.com` (o al destino que el cliente indique).
-4. Responder `2xx` **solo** si la entrega se aceptó; cualquier otro código muestra el estado de error.
-5. Permitir CORS para el origen de `SITE_URL` (o servirse desde el mismo dominio).
-
-El cliente muestra éxito únicamente ante un `2xx` real; en error conserva los datos y ofrece teléfono y email.
-Al elegir proveedor, nombrarlo en `src/pages/privacy.astro`. No hay subida de archivos: las fotos se envían por email.
+No hay subida de archivos: las fotos se envían por email.
 
 ## SEO técnico
 
@@ -153,6 +158,17 @@ Al elegir proveedor, nombrarlo en `src/pages/privacy.astro`. No hay subida de ar
 
 Repositorio: `MaycollJaramillo01/Trim-Experts`, rama `main`, conectado a Vercel. [vercel.json](vercel.json) usa
 `npm run build:staging` mientras no haya dominio: la URL `*.vercel.app` muestra el sitio público, pero no se indexa.
+El adaptador `@astrojs/vercel` genera `.vercel/output` (páginas estáticas + la función del formulario).
+
+Activar el formulario (las variables deben existir antes del build, porque deciden si se muestra):
+
+```bash
+vercel env add SMTP_HOST production
+vercel env add SMTP_PORT production
+vercel env add SMTP_USER production
+vercel env add SMTP_PASSWORD production --sensitive
+vercel deploy --prod
+```
 
 Al confirmar el dominio:
 
@@ -161,15 +177,15 @@ Al confirmar el dominio:
 3. Cambiar `buildCommand` en `vercel.json` a `npm run build` y hacer push a `main`.
 4. Comprobar `robots.txt`, `sitemap-index.xml` y un canonical, y enviar el sitemap a Search Console.
 
-### Cualquier hosting estático
+### Otro hosting
 
-Netlify, Vercel, Cloudflare Pages, S3, etc.:
+El formulario depende del adaptador de Vercel. Para otro proveedor, cambiar el adaptador en `astro.config.mjs`
+(`@astrojs/netlify`, `@astrojs/node`…); las páginas estáticas quedan en `dist/client/`.
 
-- Comando: `npm run build` · Carpeta: `dist/` · Node ≥ 22.18 (recomendado ≥ 22.23.4).
-- Variables: `SITE_URL` (obligatoria) y `PUBLIC_FORM_ENDPOINT` (opcional).
-- URLs con barra final (`trailingSlash: 'always'`); `404.html` en la raíz del `dist`.
-- Después del primer despliegue: enviar el sitemap en Google Search Console y Bing Webmaster Tools.
-- Para una URL de revisión del cliente, desplegar `npm run build:review` (no indexable).
+- Node ≥ 22.18 (recomendado ≥ 22.23.4). URLs con barra final (`trailingSlash: 'always'`).
+- Después del primer despliegue en producción: enviar el sitemap en Google Search Console y Bing Webmaster Tools.
+- Para una URL de revisión del cliente con borradores, desplegar `npm run build:review` (no indexable).
+- `astro preview` no está disponible con el adaptador de Vercel; usar `npm run dev` o `vercel dev`.
 
 ## Seguridad
 

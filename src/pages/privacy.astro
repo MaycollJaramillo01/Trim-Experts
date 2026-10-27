@@ -37,8 +37,10 @@ const crumbs = [{ name: 'Privacy Policy', path: '/privacy/' }];
       {formEndpoint ? (
         <p>
           The contact form sends your name, email, phone (if provided), selected service, project location and description to
-          the service that processes this form and delivers it to us. The form also sends the time you started filling it in
-          and a hidden empty field, which are used only to filter out automated spam.
+          this website's server, which emails them to Trim Experts through a Microsoft 365 email account managed by our
+          website provider. A copy of each message may remain in that account's sent mail. The form also sends the time you
+          started filling it in and a hidden empty field, and your IP address is checked briefly to limit repeated
+          submissions; these are used only to filter out automated spam.
         </p>
       ) : (
         <p>This website does not currently include an online form. Inquiries are made by phone or email.</p>
@@ -62,8 +64,9 @@ const crumbs = [{ name: 'Privacy Policy', path: '/privacy/' }];
 
       <h2>Hosting and server logs</h2>
       <p>
-        Like most websites, the server that delivers these pages may record standard technical information for each request,
-        such as IP address, browser type, page requested and time, as part of normal operation and security.
+        This website is hosted by Vercel. Like most hosts, the servers that deliver these pages may record standard technical
+        information for each request, such as IP address, browser type, page requested and time, as part of normal operation
+        and security.
       </p>
 
       <h2>Questions</h2>

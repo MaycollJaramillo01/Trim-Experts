@@ -8,8 +8,8 @@ Estado a 27 de octubre de 2026. Cada punto indica dónde se cambia en el código
 |---|---|---|
 | 1 | **Dominio de producción.** Sin él, `npm run build` falla a propósito. | `SITE_URL` en `.env` / hosting |
 | 2 | **Logo original y colores corporativos.** La paleta actual es neutral provisional y el header usa un logotipo de texto. Falta favicon. | `src/styles/tokens.css` (`--brand-*`), `src/components/Wordmark.astro` |
-| 3 | **Formulario:** elegir proveedor o endpoint propio que cumpla el contrato del README. Hasta entonces solo teléfono y email. | `PUBLIC_FORM_ENDPOINT`; nombrar el proveedor en `src/pages/privacy.astro` |
-| 4 | **Hosting elegido** y revisión de la política de privacidad (registros del servidor, proveedor del formulario). Recomendable revisión legal. | `src/pages/privacy.astro` |
+| 3 | **Formulario:** implementado (SMTP vía Microsoft 365). Falta cargar `SMTP_PASSWORD` en Vercel, redesplegar y hacer un envío real. Confirmar destinatario (`CONTACT_TO`, por defecto el email del negocio). Antes de fin de diciembre de 2026, revisar la autenticación SMTP de Microsoft 365 o migrar a OAuth / otro proveedor. | Variables `SMTP_*` en Vercel; `src/pages/api/estimate.ts` |
+| 4 | Revisión legal de la política de privacidad (ya nombra Vercel y el envío por Microsoft 365 desde un buzón del proveedor web). | `src/pages/privacy.astro` |
 | 5 | **Actualizar a Astro 7.4.x con Node ≥ 22.23.4** (avisos de seguridad de `npm audit`). | `package.json` |
 | 6 | **Autoría y permiso de uso de las 32 fotos de Yelp** (las propuso el intermediario; el cliente solo autorizó expresamente los vídeos de Instagram). | `src/data/media.ts` |
 

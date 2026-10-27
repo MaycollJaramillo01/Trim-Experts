@@ -1,7 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "astro",
-  "buildCommand": "npm run build:staging",
-  "outputDirectory": "dist",
-  "trailingSlash": true
+  "buildCommand": "npm run build:staging"
 }

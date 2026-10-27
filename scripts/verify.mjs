@@ -20,8 +20,9 @@ assert.ok(validateLead({ ...ok, name: ' ' }).name);
 console.log('lead validation: ok');
 
 // ---- 2. Built site ----
-const dist = new URL('../dist/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
-assert.ok(existsSync(dist), 'dist/ not found: run `npm run build` first');
+// With the Vercel adapter, static pages land in dist/client/.
+const dist = new URL('../dist/client/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+assert.ok(existsSync(dist), 'dist/client/ not found: run `npm run build` first');
 const files = readdirSync(dist, { recursive: true }).map(String).filter((f) => f.endsWith('.html'));
 const route = (f) => '/' + f.split(sep).join('/').replace(/index\.html$/, '').replace(/\.html$/, '/');
 const attr = (html, re) => (html.match(re) || [])[1];

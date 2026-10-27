@@ -1,5 +1,6 @@
 // Single source of truth for business facts and build mode.
 // Components read from here; never hard-code contact data elsewhere.
+import { SMTP_HOST, SMTP_PASSWORD, SMTP_USER } from 'astro:env/server';
 
 export const business = {
   name: 'Trim Experts',
@@ -36,7 +37,8 @@ export const business = {
   },
 } as const;
 
-export const formEndpoint = import.meta.env.PUBLIC_FORM_ENDPOINT || '';
+// The form renders only when SMTP is configured at build time, so it never appears without a way to send.
+export const formEndpoint = SMTP_HOST && SMTP_USER && SMTP_PASSWORD ? '/api/estimate/' : '';
 
 // dev and `--mode review` render draft pages; only `production` is indexable.
 export const showDrafts = import.meta.env.DEV || import.meta.env.MODE === 'review';
