@@ -4,7 +4,7 @@
 
 /* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: 6rem; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 6rem; scroll-padding-bottom: 5rem; }
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -115,16 +115,16 @@ table { border-collapse: collapse; width: 100%; }
   position: sticky; top: 0; z-index: 50;
   background: rgb(255 255 255 / 0.97); border-bottom: 1px solid var(--color-border);
 }
-.header-inner { display: flex; align-items: center; gap: var(--space-5); min-height: 4.75rem; flex-wrap: wrap; }
+.header-inner { display: flex; align-items: center; gap: var(--space-4); min-height: 4.75rem; flex-wrap: wrap; }
 .wordmark {
   display: inline-flex; flex-direction: column; line-height: 1; text-decoration: none; color: var(--color-text);
   margin-right: auto; padding-block: var(--space-2);
 }
-.wordmark strong { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.wordmark strong { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
 .wordmark span { font-family: var(--font-display); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--color-text-muted); margin-top: 0.4rem; }
-.main-nav ul { display: flex; gap: var(--space-1); list-style: none; margin: 0; padding: 0; }
+.main-nav > ul { display: flex; align-items: center; gap: 0; list-style: none; margin: 0; padding: 0; }
 .main-nav a {
-  display: block; padding: var(--space-2) var(--space-3);
+  display: block; padding: var(--space-2) 0.6rem;
   color: var(--color-text); text-decoration: none; font-size: var(--text-sm); font-weight: 500;
 }
 .main-nav a:hover { color: var(--color-primary-hover); box-shadow: inset 0 -2px 0 var(--color-border); }
@@ -133,14 +133,44 @@ table { border-collapse: collapse; width: 100%; }
 .header-phone { white-space: nowrap; }
 .menu-toggle { display: none; }
 
-@media (max-width: 71.99rem) {
+/* Services submenu: dropdown on wide screens, accordion inside the mobile menu */
+.has-sub { position: relative; display: flex; align-items: center; flex-wrap: wrap; }
+.sub-toggle {
+  display: inline-grid; place-items: center; width: 1.75rem; height: 2.25rem; padding: 0;
+  border: 0; border-radius: var(--radius); background: transparent; color: var(--color-text); cursor: pointer;
+}
+.sub-toggle:hover { background: var(--color-surface-strong); }
+.sub-toggle svg { transition: transform 0.15s ease; }
+.has-sub.is-open .sub-toggle svg { transform: rotate(180deg); }
+.main-nav .sub { display: none; list-style: none; margin: 0; padding: var(--space-2) 0; }
+.has-sub.is-open > .sub { display: block; }
+.main-nav .sub a { padding: var(--space-2) var(--space-4); white-space: nowrap; }
+.main-nav .sub a:hover { box-shadow: none; background: var(--color-surface); }
+.main-nav .sub a[aria-current] { box-shadow: inset 3px 0 0 var(--color-primary); }
+@media (min-width: 75rem) {
+  .has-sub > a { padding-right: var(--space-1); }
+  .main-nav .sub {
+    position: absolute; top: 100%; left: 0; z-index: 60; min-width: 16rem;
+    background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+}
+@media (min-width: 75rem) and (hover: hover) {
+  .has-sub:hover:not(.is-dismissed) > .sub { display: block; }
+  .has-sub:hover:not(.is-dismissed) .sub-toggle svg { transform: rotate(180deg); }
+}
+
+@media (max-width: 74.99rem) {
   .header-estimate { display: none; }
   .js .menu-toggle { display: inline-flex; }
   .main-nav { order: 3; flex-basis: 100%; }
   .js .main-nav:not(.is-open) { display: none; }
-  .main-nav ul { flex-direction: column; gap: 0; padding-bottom: var(--space-4); }
+  .main-nav > ul { flex-direction: column; align-items: stretch; gap: 0; padding-bottom: var(--space-4); }
   .main-nav a { padding: var(--space-3) var(--space-2); border-top: 1px solid var(--color-border); font-size: var(--text-base); }
   .main-nav a[aria-current] { box-shadow: inset 3px 0 0 var(--color-primary); padding-left: var(--space-4); }
+  .has-sub > a { flex: 1; }
+  .sub-toggle { width: 3rem; height: auto; align-self: stretch; border-top: 1px solid var(--color-border); border-radius: 0; }
+  .main-nav .sub { flex-basis: 100%; padding: 0 0 var(--space-2) var(--space-4); }
+  .main-nav .sub a { border-top: 0; padding: var(--space-2); font-size: var(--text-sm); }
 }
 @media (max-width: 26rem) {
   .header-inner { gap: var(--space-3); }
@@ -326,7 +356,8 @@ table { border-collapse: collapse; width: 100%; }
 .form-status[data-state="error"] { background: var(--color-error-bg); color: var(--color-error-text); }
 
 /* ---------- Footer ---------- */
-.site-footer { border-top: 1px solid rgb(255 255 255 / 0.14); background: var(--color-inverse-bg); color: var(--color-inverse-text); padding-block: var(--space-8) var(--space-5); font-size: var(--text-sm); }
+/* Bottom padding keeps the last footer row clear of the WhatsApp bubble */
+.site-footer { border-top: 1px solid rgb(255 255 255 / 0.14); background: var(--color-inverse-bg); color: var(--color-inverse-text); padding-block: var(--space-8) 6rem; font-size: var(--text-sm); }
 .site-footer a { color: var(--color-inverse-text); text-decoration-color: rgb(255 255 255 / 0.35); }
 .site-footer a:hover { text-decoration-color: currentColor; }
 .site-footer h2 { font-size: var(--text-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-inverse-muted); margin-bottom: var(--space-4); }
@@ -337,6 +368,18 @@ table { border-collapse: collapse; width: 100%; }
 .footer-brand .wordmark span { color: var(--color-inverse-muted); }
 .footer-brand p { color: var(--color-inverse-muted); max-width: 22rem; }
 .footer-bottom { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 1px solid rgb(255 255 255 / 0.15); color: var(--color-inverse-muted); display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: space-between; }
+
+/* ---------- WhatsApp bubble ---------- */
+.wa-bubble {
+  position: fixed; z-index: 40;
+  right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom));
+  display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background: var(--color-whatsapp); color: #fff; box-shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.wa-bubble:hover { background: var(--color-whatsapp-hover); transform: translateY(-2px); }
+.wa-bubble:focus-visible { outline-offset: 3px; }
+@media print { .wa-bubble { display: none; } }
 
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: reduce) {

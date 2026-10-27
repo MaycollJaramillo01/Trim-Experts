@@ -64,8 +64,8 @@ src/
   lib/lead.ts        Validación del formulario (contrato compartido con el endpoint).
   styles/tokens.css  Tokens de diseño (color, tipo, espaciado). Paleta provisional.
   styles/global.css  Estilos.
-  components/        Header, Footer, Wordmark, PageHero (+ migas de pan), Photo, Gallery (+ lightbox), Reels, CTA, FAQ,
-                     ServiceCards, HowToRequest, ContactForm.
+  components/        Header (+ submenú de servicios), Footer, Wordmark, PageHero (+ migas de pan), Photo, Gallery (+ lightbox),
+                     Reels, CTA, FAQ, ServiceCards, HowToRequest, ContactForm, WhatsAppButton (burbuja, enlace a wa.me).
   layouts/Base.astro Head (SEO, OG, JSON-LD, precarga de fuentes), aviso de borrador.
   pages/             index, about, services/, services/[slug], projects, service-areas/, service-areas/brooklyn-ny, contact, privacy, 404, robots.txt
 scripts/verify.mjs   Verificación post-build y generación de la matriz.

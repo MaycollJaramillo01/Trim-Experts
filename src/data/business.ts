@@ -30,12 +30,19 @@ export const business = {
     instagram: 'https://www.instagram.com/trim_experts/',
     yelp: 'https://www.yelp.com/biz/trim-experts-brooklyn',
   },
+  // Same number as the phone. Confirm with the client that it is active on WhatsApp.
+  whatsapp: {
+    number: '13476326556',
+    message: "Hi Trim Experts, I'd like to discuss a project in Brooklyn.",
+  },
   // Published on Yelp but not yet reconfirmed by the client: hidden until `confirmed` is true.
   payments: {
     methods: ['Zelle', 'Venmo', 'PayPal', 'Cash App'],
     confirmed: false,
   },
 } as const;
+
+export const whatsappHref = `https://wa.me/${business.whatsapp.number}?text=${encodeURIComponent(business.whatsapp.message)}`;
 
 // The form renders only when SMTP is configured at build time, so it never appears without a way to send.
 export const formEndpoint = SMTP_HOST && SMTP_USER && SMTP_PASSWORD ? '/api/estimate/' : '';

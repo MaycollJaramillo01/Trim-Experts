@@ -1,16 +1,24 @@
 ---
 import { business } from '../data/business';
+import { visibleServices } from '../data/services';
 import Wordmark from './Wordmark.astro';
 
 const nav = [
-  { href: '/services/', label: 'Services' },
+  { href: '/', label: 'Home' },
+  {
+    href: '/services/',
+    label: 'Services',
+    children: visibleServices(false).map((s) => ({ href: `/services/${s.slug}/`, label: s.name })),
+  },
   { href: '/projects/', label: 'Projects' },
   { href: '/service-areas/', label: 'Service Area' },
   { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'Contact' },
 ];
 const path = Astro.url.pathname;
-const current = (href: string) => (path === href ? 'page' : path.startsWith(href) ? 'true' : undefined);
+// "page" for the exact page, "true" for its section ("/" is never a section).
+const current = (href: string) =>
+  path === href ? 'page' : href !== '/' && path.startsWith(href) ? 'true' : undefined;
 ---
 
 <header class="site-header">
@@ -18,7 +26,23 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
     <Wordmark />
     <nav class="main-nav" id="main-nav" aria-label="Main">
       <ul>
-        {nav.map((n) => <li><a href={n.href} aria-current={current(n.href)}>{n.label}</a></li>)}
+        {nav.map((n) => (
+          <li class:list={{ 'has-sub': n.children }}>
+            <a href={n.href} aria-current={current(n.href)}>{n.label}</a>
+            {n.children && (
+              <>
+                <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-services">
+                  <span class="sr-only">{n.label} submenu</span>
+                  <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 4 4 4 4-4" /></svg>
+                </button>
+                <ul class="sub" id="sub-services">
+                  <li><a href={n.href}>All services</a></li>
+                  {n.children.map((c) => <li><a href={c.href} aria-current={current(c.href)}>{c.label}</a></li>)}
+                </ul>
+              </>
+            )}
+          </li>
+        ))}
       </ul>
     </nav>
     <div class="header-actions">
@@ -27,7 +51,7 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
         <span class="sr-only">Call Trim Experts:</span>
         <span class="phone-number">{business.phone.display}</span>
       </a>
-      <a class="btn btn--primary btn--small header-estimate" href="/contact/">Request a Project Estimate</a>
+      <a class="btn btn--primary btn--small header-estimate" href="/contact/">Request an Estimate</a>
       <button class="btn btn--secondary btn--small menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Menu</button>
     </div>
   </div>
@@ -36,14 +60,39 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
 <script>
   const btn = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const nav = document.getElementById('main-nav');
-  const set = (open: boolean) => {
+  const setMenu = (open: boolean) => {
     btn?.setAttribute('aria-expanded', String(open));
     nav?.classList.toggle('is-open', open);
   };
-  btn?.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+  btn?.addEventListener('click', () => setMenu(btn.getAttribute('aria-expanded') !== 'true'));
+
+  // Services submenu: disclosure button (keyboard, touch); on wide screens hover also opens it via CSS.
+  const sub = document.querySelector<HTMLElement>('.has-sub');
+  const subBtn = sub?.querySelector<HTMLButtonElement>('.sub-toggle');
+  const setSub = (open: boolean) => {
+    subBtn?.setAttribute('aria-expanded', String(open));
+    sub?.classList.toggle('is-open', open);
+  };
+  subBtn?.addEventListener('click', () => setSub(subBtn.getAttribute('aria-expanded') !== 'true'));
+  sub?.addEventListener('focusout', (e) => {
+    if (!sub.contains(e.relatedTarget as Node | null)) setSub(false);
+  });
+  sub?.addEventListener('mouseleave', () => sub.classList.remove('is-dismissed'));
+  document.addEventListener('click', (e) => {
+    if (sub && !sub.contains(e.target as Node)) setSub(false);
+  });
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && btn?.getAttribute('aria-expanded') === 'true') {
-      set(false);
+    if (e.key !== 'Escape') return;
+    if (sub && (sub.classList.contains('is-open') || sub.matches(':hover'))) {
+      const hadFocus = sub.contains(document.activeElement);
+      setSub(false);
+      sub.classList.add('is-dismissed'); // also hides a hover-opened submenu until the pointer leaves
+      if (hadFocus) subBtn?.focus();
+      return;
+    }
+    if (btn?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
       btn.focus();
     }
   });
