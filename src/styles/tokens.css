@@ -1,10 +1,10 @@
 /*
   Design tokens. Single source for color, type and spacing.
 
-  BRAND COLORS ARE PROVISIONAL. No logo file was supplied with the project
-  material, so this is a neutral palette, not one derived from the logo.
-  When the logo arrives: sample its colors, replace the --brand-* values,
-  and re-run the contrast check described in the README.
+  BRAND COLORS ARE PROVISIONAL: a neutral palette, not yet derived from the
+  logo (received 2026-10-28, src/assets/logo/). Still to do: sample its
+  colors, replace the --brand-* values, and re-run the contrast check
+  described in the README.
 */
 :root {
   /* Brand (provisional neutral) */

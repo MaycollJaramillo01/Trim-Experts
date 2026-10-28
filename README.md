@@ -76,9 +76,10 @@ No hay selector de idioma porque no existe versión traducida. Para añadirla: c
 
 ## Identidad visual
 
-**No se encontró el logo** en el material recibido. La paleta de [src/styles/tokens.css](src/styles/tokens.css) es neutral y provisional
-(carbón `#1e2529` + neutros cálidos), no derivada del logo. El header usa un logotipo de texto ([src/components/Wordmark.astro](src/components/Wordmark.astro)).
-Al recibir el logo: muestrear sus colores, sustituir `--brand-*`, reemplazar el Wordmark, añadir favicon y volver a comprobar contraste.
+**Logo** recibido el 28-10-2026 en tres versiones ([src/assets/logo/](src/assets/logo/): dorada, blanca y gris); header y footer usan la
+dorada vía [src/components/Wordmark.astro](src/components/Wordmark.astro). La paleta de [src/styles/tokens.css](src/styles/tokens.css) sigue
+neutral y provisional (carbón `#1e2529` + neutros cálidos). Pendiente: muestrear los colores del logo, sustituir `--brand-*`, añadir favicon
+y volver a comprobar contraste.
 
 Contraste de la paleta actual (WCAG): texto 17.4:1, texto secundario 7.8:1 (7.2:1 sobre superficie), botón primario 15.5:1,
 texto sobre fondo oscuro 13.9:1, insignias 7.4–7.6:1, borde de campos 7.8:1.

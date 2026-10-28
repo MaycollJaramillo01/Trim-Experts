@@ -1,6 +1,8 @@
 ---
-// ponytail: text wordmark stands in for the logo, which was not supplied. Swap for the logo file when it arrives.
+import { Image } from 'astro:assets';
 import { business } from '../data/business';
+import logo from '../assets/logo/trim-experts-gold.png';
 ---
 
-<a class="wordmark" href="/"><strong>{business.name}</strong><span>{business.area.short}</span></a>
+<!-- Same URL in header and footer, so eager costs nothing extra in the footer. -->
+<a class="wordmark" href="/"><Image src={logo} alt={business.name} width={180} densities={[1, 2]} loading="eager" /></a>
