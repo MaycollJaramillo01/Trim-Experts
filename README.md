@@ -78,8 +78,11 @@ No hay selector de idioma porque no existe versión traducida. Para añadirla: c
 
 **Logo** recibido el 28-10-2026 en tres versiones ([src/assets/logo/](src/assets/logo/): dorada, blanca y gris); header y footer usan la
 dorada vía [src/components/Wordmark.astro](src/components/Wordmark.astro). La paleta de [src/styles/tokens.css](src/styles/tokens.css) sigue
-neutral y provisional (carbón `#1e2529` + neutros cálidos). Pendiente: muestrear los colores del logo, sustituir `--brand-*`, añadir favicon
+neutral y provisional (carbón `#1e2529` + neutros cálidos). Pendiente: muestrear los colores del logo, sustituir `--brand-*`
 y volver a comprobar contraste.
+
+**Favicon** (28-10-2026): [public/favicon.ico](public/favicon.ico) (16, 32 y 48 px) y [public/apple-touch-icon.png](public/apple-touch-icon.png)
+(180 px), con el símbolo del logo dorado (la T con la puerta) sobre el carbón `#1e2529` del header. Si cambia `--brand-900`, hay que regenerarlos.
 
 Contraste de la paleta actual (WCAG): texto 17.4:1, texto secundario 7.8:1 (7.2:1 sobre superficie), botón primario 15.5:1,
 texto sobre fondo oscuro 13.9:1, insignias 7.4–7.6:1, borde de campos 7.8:1.
