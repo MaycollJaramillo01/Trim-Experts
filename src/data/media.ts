@@ -1,11 +1,12 @@
 import type { ImageMetadata } from 'astro';
 
-// Photos published on the Trim Experts Yelp profile (inventory: Trim_Experts/fotos_fuentes.json).
+// Photos published on the Trim Experts Yelp profile (inventory: Trim_Experts/fotos_fuentes.json),
+// plus photos sent directly by the client (n >= 33, no `yelp` id).
 // `n` is the original file number, `yelp` the Yelp photo id. Descriptions state only what is visible:
 // no locations, materials or before/after pairings are claimed.
 type Stage = 'completed' | 'in-progress' | null;
 type Group = 'doors' | 'closets' | 'outdoor' | 'interior';
-interface PhotoDef { n: number; yelp: string; group: Group; stage: Stage; title: string; alt: string }
+interface PhotoDef { n: number; yelp?: string; group: Group; stage: Stage; title: string; alt: string }
 
 const defs = {
   'wall-trim-panels-in-progress': { n: 1, yelp: 'bwn_FHfZDyHsFVb0XR6Jow', group: 'interior', stage: 'in-progress', title: 'Wall trim and panel layout', alt: 'Empty room with panel molding being laid out on the walls and a miter saw on the protected floor' },
@@ -25,7 +26,8 @@ const defs = {
   'ceiling-molding-in-progress': { n: 15, yelp: 'z_ovGKsYXoehuHX0ly3MzA', group: 'interior', stage: 'in-progress', title: 'Ceiling molding', alt: 'Room with a recessed ceiling outlined in molding, with ladders and tools on the floor' },
   'crew-interior-finish-work': { n: 16, yelp: 'y4R-vLbF--Gm56hBQPkh1w', group: 'interior', stage: 'in-progress', title: 'Crew at work on interior finishes', alt: 'Two workers on ladders working on wall and ceiling finishes in a room under renovation' },
   'entry-vestibule-glass-doors-in-progress': { n: 17, yelp: 'rmljz0ug4txLgCA-7kuH_w', group: 'doors', stage: 'in-progress', title: 'Entry vestibule doors', alt: 'Covered entry with three dark-framed glass doors set in wood-look wall cladding, still under construction' },
-  'doors-staged-for-installation': { n: 18, yelp: 'OoLFVFPbULW8e6ogJEABsw', group: 'doors', stage: 'in-progress', title: 'Doors staged for installation', alt: 'Row of white interior doors leaning against a brick building, ready for installation' },
+  // Sent by the client on 2026-10-28 to replace photo 18 (doors staged outdoors); not on Yelp.
+  'arched-wood-doors-hallway': { n: 33, group: 'doors', stage: 'completed', title: 'Arched wood doors in a hallway', alt: 'Hallway with four arched wood doors with vertically grooved panels, matching arched casing and brass hardware' },
   'door-frames-during-installation': { n: 19, yelp: 'h2KN-W1M466GtGj3YSNhRg', group: 'doors', stage: 'in-progress', title: 'Doors and frames during installation', alt: 'White doors and frames being installed along a wall, with materials on the floor' },
   'living-room-moldings-arched-windows': { n: 20, yelp: '8N0OGleJZEkhbT_OoNcXtw', group: 'interior', stage: 'completed', title: 'Living room with ceiling molding', alt: 'Finished living room with ceiling molding, patterned carpet and three arched windows' },
   'deck-and-gazebo': { n: 21, yelp: 'uExp7uiLYP8HOO17GRy91w', group: 'outdoor', stage: null, title: 'Deck leading to a gazebo', alt: 'Gray deck boards leading into a wood gazebo with railings, trees behind' },
